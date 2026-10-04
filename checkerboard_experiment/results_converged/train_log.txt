@@ -1,0 +1,156 @@
+==============================================================================
+李宏毅《Why Deep》棋盘格实验复现（纯 NumPy 手写 MLP）
+==============================================================================
+Python 3.14.5 | numpy 2.4.6 | matplotlib 3.10.9
+绘图字体: Microsoft YaHei
+棋盘格格距 cell_size = 0.5（水平方向约 4 个菱形）
+网络: 2 -> 64 x {1,3} -> 1, 激活 tanh, 输出 sigmoid
+优化: Adam, lr=0.01, batch=全批量, epochs=2500
+第一层权重初始化放大倍数 = 4.0（等价于把输入尺度放大同样倍数）
+独立测试集: 20000 个新样本（与训练集同分布、不同随机种子）
+实验配置: layers=[1, 3] x samples=[100000, 20000]
+棋盘格 ASCII 预览已保存: results/checkerboard_ascii.txt
+
+[数据] 正在生成 100000 个训练点池 + 20000 个独立测试点 ...
+       训练池正类比例 = 0.4999（理论上接近 0.5）
+       测试集正类比例 = 0.4996
+
+------------------------------------------------------------------------------
+[实验] 1 个隐藏层 x 100000 个训练样本  (tag=1layer_100000)
+       可训练参数个数 = 257
+       每次参数更新使用样本数 = 100000 （共 2500 次更新）
+    epoch    1 | loss 0.75656 | train_acc 0.4998 | test_acc 0.5063 |    0.3s
+    epoch  125 | loss 0.69260 | train_acc 0.5137 | test_acc 0.5095 |   71.8s
+    epoch  250 | loss 0.69195 | train_acc 0.5049 | test_acc 0.5022 |  147.6s
+    epoch  375 | loss 0.68873 | train_acc 0.5394 | test_acc 0.5404 |  224.9s
+    epoch  500 | loss 0.63568 | train_acc 0.6762 | test_acc 0.6793 |  296.9s
+    epoch  625 | loss 0.55197 | train_acc 0.7543 | test_acc 0.7547 |  370.5s
+    epoch  750 | loss 0.48708 | train_acc 0.7706 | test_acc 0.7716 |  433.4s
+    epoch  875 | loss 0.42637 | train_acc 0.8132 | test_acc 0.8149 |  466.7s
+    epoch 1000 | loss 0.38298 | train_acc 0.8483 | test_acc 0.8469 |  529.5s
+    epoch 1125 | loss 0.31488 | train_acc 0.8854 | test_acc 0.8831 |  569.5s
+    epoch 1250 | loss 0.21434 | train_acc 0.9424 | test_acc 0.9412 |  643.4s
+    epoch 1375 | loss 0.17095 | train_acc 0.9636 | test_acc 0.9625 |  692.0s
+    epoch 1500 | loss 0.14823 | train_acc 0.9706 | test_acc 0.9697 |  764.2s
+    epoch 1625 | loss 0.13313 | train_acc 0.9751 | test_acc 0.9730 |  831.5s
+    epoch 1750 | loss 0.12207 | train_acc 0.9781 | test_acc 0.9755 |  902.2s
+    epoch 1875 | loss 0.11319 | train_acc 0.9808 | test_acc 0.9793 |  966.5s
+    epoch 2000 | loss 0.10593 | train_acc 0.9825 | test_acc 0.9802 | 1006.9s
+    epoch 2125 | loss 0.09990 | train_acc 0.9841 | test_acc 0.9821 | 1034.6s
+    epoch 2250 | loss 0.09475 | train_acc 0.9850 | test_acc 0.9832 | 1057.6s
+    epoch 2375 | loss 0.09024 | train_acc 0.9858 | test_acc 0.9832 | 1098.5s
+    epoch 2500 | loss 0.08636 | train_acc 0.9860 | test_acc 0.9834 | 1123.2s
+    => 训练准确率 0.9860 | 测试准确率 0.9834 | 耗时 1123.6s
+       结构指标: 单元平均正确率 0.9857, 最差单元 0.9731, 判反的单元 0/40
+       决策区域对比图已保存: results/1layer_100000.png
+       决策区域 ASCII 图已保存: results/decision_ascii_1layer_100000.txt
+
+------------------------------------------------------------------------------
+[实验] 1 个隐藏层 x 20000 个训练样本  (tag=1layer_20000)
+       可训练参数个数 = 257
+       每次参数更新使用样本数 = 20000 （共 2500 次更新）
+    epoch    1 | loss 0.75846 | train_acc 0.5008 | test_acc 0.5080 |    0.1s
+    epoch  125 | loss 0.69254 | train_acc 0.4970 | test_acc 0.4911 |    4.4s
+    epoch  250 | loss 0.69163 | train_acc 0.5121 | test_acc 0.5063 |    9.3s
+    epoch  375 | loss 0.68897 | train_acc 0.5223 | test_acc 0.5252 |   14.2s
+    epoch  500 | loss 0.64430 | train_acc 0.6345 | test_acc 0.6375 |   18.7s
+    epoch  625 | loss 0.55979 | train_acc 0.7548 | test_acc 0.7521 |   23.3s
+    epoch  750 | loss 0.49919 | train_acc 0.7621 | test_acc 0.7588 |   27.9s
+    epoch  875 | loss 0.44636 | train_acc 0.7975 | test_acc 0.7989 |   33.0s
+    epoch 1000 | loss 0.38667 | train_acc 0.8455 | test_acc 0.8438 |   37.7s
+    epoch 1125 | loss 0.34422 | train_acc 0.8660 | test_acc 0.8651 |   42.4s
+    epoch 1250 | loss 0.22368 | train_acc 0.9364 | test_acc 0.9333 |   47.5s
+    epoch 1375 | loss 0.17684 | train_acc 0.9626 | test_acc 0.9591 |   52.7s
+    epoch 1500 | loss 0.15301 | train_acc 0.9704 | test_acc 0.9673 |   57.6s
+    epoch 1625 | loss 0.13631 | train_acc 0.9761 | test_acc 0.9725 |   62.3s
+    epoch 1750 | loss 0.12362 | train_acc 0.9791 | test_acc 0.9749 |   66.9s
+    epoch 1875 | loss 0.11388 | train_acc 0.9800 | test_acc 0.9767 |   72.1s
+    epoch 2000 | loss 0.10613 | train_acc 0.9812 | test_acc 0.9788 |   77.1s
+    epoch 2125 | loss 0.09983 | train_acc 0.9825 | test_acc 0.9791 |   81.5s
+    epoch 2250 | loss 0.09444 | train_acc 0.9828 | test_acc 0.9799 |   86.0s
+    epoch 2375 | loss 0.08955 | train_acc 0.9837 | test_acc 0.9805 |   90.7s
+    epoch 2500 | loss 0.08516 | train_acc 0.9851 | test_acc 0.9814 |   95.7s
+    => 训练准确率 0.9851 | 测试准确率 0.9814 | 耗时 95.8s
+       结构指标: 单元平均正确率 0.9845, 最差单元 0.9619, 判反的单元 0/40
+       决策区域对比图已保存: results/1layer_20000.png
+       决策区域 ASCII 图已保存: results/decision_ascii_1layer_20000.txt
+
+------------------------------------------------------------------------------
+[实验] 3 个隐藏层 x 100000 个训练样本  (tag=3layer_100000)
+       可训练参数个数 = 8577
+       每次参数更新使用样本数 = 100000 （共 2500 次更新）
+    epoch    1 | loss 0.69662 | train_acc 0.5050 | test_acc 0.5015 |    0.9s
+    epoch  125 | loss 0.63464 | train_acc 0.5646 | test_acc 0.5623 |  105.8s
+    epoch  250 | loss 0.51032 | train_acc 0.7515 | test_acc 0.7502 |  168.6s
+    epoch  375 | loss 0.43496 | train_acc 0.7982 | test_acc 0.7985 |  238.5s
+    epoch  500 | loss 0.31106 | train_acc 0.8470 | test_acc 0.8474 |  302.6s
+    epoch  625 | loss 0.18483 | train_acc 0.9341 | test_acc 0.9342 |  371.3s
+    epoch  750 | loss 0.09226 | train_acc 0.9740 | test_acc 0.9729 |  438.6s
+    epoch  875 | loss 0.07628 | train_acc 0.9733 | test_acc 0.9717 |  513.6s
+    epoch 1000 | loss 0.06021 | train_acc 0.9738 | test_acc 0.9732 |  582.8s
+    epoch 1125 | loss 0.05709 | train_acc 0.9715 | test_acc 0.9694 |  654.9s
+    epoch 1250 | loss 0.07881 | train_acc 0.9684 | test_acc 0.9669 |  726.7s
+    epoch 1375 | loss 0.04269 | train_acc 0.9820 | test_acc 0.9792 |  798.1s
+    epoch 1500 | loss 0.03556 | train_acc 0.9926 | test_acc 0.9906 |  886.2s
+    epoch 1625 | loss 0.03389 | train_acc 0.9918 | test_acc 0.9901 | 1032.7s
+    epoch 1750 | loss 0.04332 | train_acc 0.9833 | test_acc 0.9816 | 1125.4s
+    epoch 1875 | loss 0.03052 | train_acc 0.9919 | test_acc 0.9897 | 1230.0s
+    epoch 2000 | loss 0.02932 | train_acc 0.9897 | test_acc 0.9880 | 1308.8s
+    epoch 2125 | loss 0.02859 | train_acc 0.9904 | test_acc 0.9883 | 1384.6s
+    epoch 2250 | loss 0.02812 | train_acc 0.9911 | test_acc 0.9892 | 1483.7s
+    epoch 2375 | loss 0.03457 | train_acc 0.9810 | test_acc 0.9793 | 1612.5s
+    epoch 2500 | loss 0.02455 | train_acc 0.9935 | test_acc 0.9919 | 1686.3s
+    => 训练准确率 0.9935 | 测试准确率 0.9919 | 耗时 1687.5s
+       结构指标: 单元平均正确率 0.9905, 最差单元 0.9700, 判反的单元 0/40
+       决策区域对比图已保存: results/3layer_100000.png
+       决策区域 ASCII 图已保存: results/decision_ascii_3layer_100000.txt
+
+------------------------------------------------------------------------------
+[实验] 3 个隐藏层 x 20000 个训练样本  (tag=3layer_20000)
+       可训练参数个数 = 8577
+       每次参数更新使用样本数 = 20000 （共 2500 次更新）
+    epoch    1 | loss 0.69650 | train_acc 0.5020 | test_acc 0.4990 |    0.2s
+    epoch  125 | loss 0.62835 | train_acc 0.5958 | test_acc 0.5889 |   13.9s
+    epoch  250 | loss 0.50655 | train_acc 0.7486 | test_acc 0.7509 |   27.5s
+    epoch  375 | loss 0.40245 | train_acc 0.8096 | test_acc 0.8109 |   41.6s
+    epoch  500 | loss 0.28220 | train_acc 0.8760 | test_acc 0.8760 |   55.7s
+    epoch  625 | loss 0.13310 | train_acc 0.9571 | test_acc 0.9535 |   75.0s
+    epoch  750 | loss 0.07599 | train_acc 0.9763 | test_acc 0.9696 |  122.5s
+    epoch  875 | loss 0.06020 | train_acc 0.9870 | test_acc 0.9812 |  137.0s
+    epoch 1000 | loss 0.08773 | train_acc 0.9649 | test_acc 0.9617 |  151.0s
+    epoch 1125 | loss 0.04500 | train_acc 0.9907 | test_acc 0.9848 |  165.3s
+    epoch 1250 | loss 0.04245 | train_acc 0.9805 | test_acc 0.9749 |  180.0s
+    epoch 1375 | loss 0.03923 | train_acc 0.9876 | test_acc 0.9830 |  195.9s
+    epoch 1500 | loss 0.03730 | train_acc 0.9869 | test_acc 0.9803 |  228.4s
+    epoch 1625 | loss 0.03585 | train_acc 0.9903 | test_acc 0.9844 |  242.4s
+    epoch 1750 | loss 0.03123 | train_acc 0.9933 | test_acc 0.9868 |  257.0s
+    epoch 1875 | loss 0.02960 | train_acc 0.9940 | test_acc 0.9875 |  271.8s
+    epoch 2000 | loss 0.02818 | train_acc 0.9939 | test_acc 0.9871 |  286.2s
+    epoch 2125 | loss 0.02719 | train_acc 0.9940 | test_acc 0.9873 |  301.0s
+    epoch 2250 | loss 0.03580 | train_acc 0.9908 | test_acc 0.9843 |  314.7s
+    epoch 2375 | loss 0.02545 | train_acc 0.9938 | test_acc 0.9881 |  329.1s
+    epoch 2500 | loss 0.02691 | train_acc 0.9908 | test_acc 0.9846 |  343.2s
+    => 训练准确率 0.9908 | 测试准确率 0.9846 | 耗时 343.5s
+       结构指标: 单元平均正确率 0.9848, 最差单元 0.9537, 判反的单元 0/40
+       决策区域对比图已保存: results/3layer_20000.png
+       决策区域 ASCII 图已保存: results/decision_ascii_3layer_20000.txt
+
+==============================================================================
+汇总：4 组配置的准确率
+==============================================================================
+   隐层数 |     训练样本 |     参数量 |      训练准确率 |      测试准确率 |       单元平均正确率 |     判反单元 |    耗时(s)
+     1 |   100000 |     257 |     0.9860 |     0.9834 |        0.9857 |   0/40   |   1123.6
+     1 |    20000 |     257 |     0.9851 |     0.9814 |        0.9845 |   0/40   |     95.8
+     3 |   100000 |    8577 |     0.9935 |     0.9919 |        0.9905 |   0/40   |   1687.5
+     3 |    20000 |    8577 |     0.9908 |     0.9846 |        0.9848 |   0/40   |    343.5
+
+关键对比（同一训练样本量下，3 隐层减 1 隐层的测试准确率差）：
+     100000 样本: 1 隐层 0.9834 | 3 隐层 0.9919 | 差值 +0.0084
+      20000 样本: 1 隐层 0.9814 | 3 隐层 0.9846 | 差值 +0.0031
+
+总耗时 3253.8s（含数据生成、训练、评估、画图）
+结果已保存到: F:/kimi/checkerboard_experiment/results
+  - results/metrics.json
+  - results/train_log.txt
+  - results/all_configs_comparison.png
+  - results/training_curves.png

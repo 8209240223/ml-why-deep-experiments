@@ -1,0 +1,35 @@
+# Python 字节码与缓存
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+
+# 打包 / 分发产物
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# 虚拟环境
+.venv/
+venv/
+env/
+ENV/
+
+# 测试与类型检查缓存
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# 编辑器 / 操作系统
+.vscode/
+.idea/
+*.swp
+*~
+.DS_Store
+Thumbs.db
+
+# 临时目录（冒烟测试输出等）
+/tmp/
